@@ -1,6 +1,6 @@
 
 import { UserRole } from './types';
-import { Home, ClipboardList, MapPinned, MessageSquareMore, BarChart3, Settings, ShieldCheck, Bell, HelpCircle, Languages, LogOut } from 'lucide-react';
+import { Home, ClipboardList, MapPin, MessageSquareMore, BarChart3, Settings, ShieldCheck, Bell, HelpCircle, Languages, LogOut } from 'lucide-react';
 
 export const ZONES_SANTE = ['Goma', 'Karisimbi', 'Nyiragongo'];
 
@@ -13,9 +13,9 @@ export const AIRES_BY_ZONE: Record<string, string[]> = {
 export const MOCK_USERS = [
   { id: 'u1', agentId: 'ID-001', pin: '0000', name: 'Admin DPS', role: UserRole.ADMIN_DPS, avatar: 'https://i.pravatar.cc/150?u=dps' },
   { id: 'u2', agentId: 'ID-001', pin: '0000', name: 'Admin Zone Goma', role: UserRole.ADMIN_ZONE, zone: 'Goma', avatar: 'https://i.pravatar.cc/150?u=zadmin' },
-  { id: 'u3', agentId: 'ID-002', pin: '1234', name: 'Personnel Médical (Zone)', role: UserRole.PERSONNEL_ZONE, zone: 'Karisimbi', avatar: 'https://i.pravatar.cc/150?u=zmed' },
+  { id: 'u3', agentId: 'ID-002', pin: '1234', name: 'Personnel Zone', role: UserRole.PERSONNEL_ZONE, zone: 'Karisimbi', avatar: 'https://i.pravatar.cc/150?u=zmed' },
   { id: 'u4', agentId: 'ID-001', pin: '0000', name: 'Admin Aire Rusayo', role: UserRole.ADMIN_AIRE, facility: 'Rusayo', avatar: 'https://i.pravatar.cc/150?u=aadmin' },
-  { id: 'u5', agentId: 'ID-002', pin: '1234', name: 'Personnel Médical (Aire)', role: UserRole.PERSONNEL_AIRE, facility: 'Rusayo', avatar: 'https://i.pravatar.cc/150?u=amed' },
+  { id: 'u5', agentId: 'ID-002', pin: '1234', name: 'Personnel Aire', role: UserRole.PERSONNEL_AIRE, facility: 'Rusayo', avatar: 'https://i.pravatar.cc/150?u=amed' },
   { id: 'u6', phone: '0991234567', pin: '1234', name: 'Maman Divine', role: UserRole.FEMME_ENCEINTE, pregnancyWeek: 28, avatar: 'https://i.pravatar.cc/150?u=mama' },
 ];
 
@@ -27,12 +27,12 @@ export const NAV_ITEMS_BY_ROLE: Record<string, any[]> = {
   ],
   [UserRole.ADMIN_ZONE]: [
     { id: 'home', label: 'Dashboard', icon: Home },
-    { id: 'referral', label: 'Transferts', icon: MapPinned },
+    { id: 'referral', label: 'Transferts', icon: MapPin },
     { id: 'admin', label: 'Aires', icon: Settings },
   ],
   [UserRole.PERSONNEL_ZONE]: [
     { id: 'home', label: 'Activités', icon: Home },
-    { id: 'referral', label: 'Transferts', icon: MapPinned },
+    { id: 'referral', label: 'Transferts', icon: MapPin },
     { id: 'stats', label: 'Indicateurs', icon: BarChart3 },
   ],
   [UserRole.ADMIN_AIRE]: [
