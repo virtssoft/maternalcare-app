@@ -1,0 +1,7 @@
+{
+  "name": "Maternal Care+APP",
+  "description": "A unified platform for maternal health tracking, connecting healthcare providers and pregnant women with a seamless, role-based experience.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
