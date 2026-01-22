@@ -34,6 +34,7 @@ const App: React.FC = () => {
   const [isViewingPartogram, setIsViewingPartogram] = useState(false);
 
   useEffect(() => {
+    // Écran de chargement initial
     const timer = setTimeout(() => setAppState('portal-selection'), 2000);
     return () => clearTimeout(timer);
   }, []);
@@ -43,27 +44,28 @@ const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
+    // Simulation de délai réseau
     setTimeout(() => {
-      let user;
+      let userFound = null;
       if (selectedPortal === 'COMMUNITY') {
-        user = MOCK_USERS.find(u => u.phone === loginId && u.pin === loginPin);
+        userFound = MOCK_USERS.find(u => u.phone === loginId && u.pin === loginPin);
       } else {
-        user = MOCK_USERS.find(u => u.agentId === loginId && u.pin === loginPin);
+        userFound = MOCK_USERS.find(u => u.agentId === loginId && u.pin === loginPin);
         
-        // Validation stricte par portail pour le test
-        if (user) {
-          if (selectedPortal === 'DPS' && user.role !== UserRole.ADMIN_DPS) user = null;
-          if (selectedPortal === 'ZONE' && ![UserRole.ADMIN_ZONE, UserRole.PERSONNEL_ZONE].includes(user.role)) user = null;
-          if (selectedPortal === 'AIRE' && ![UserRole.ADMIN_AIRE, UserRole.PERSONNEL_AIRE].includes(user.role)) user = null;
+        // Validation stricte du portail sélectionné
+        if (userFound) {
+          if (selectedPortal === 'DPS' && userFound.role !== UserRole.ADMIN_DPS) userFound = null;
+          if (selectedPortal === 'ZONE' && ![UserRole.ADMIN_ZONE, UserRole.PERSONNEL_ZONE].includes(userFound.role)) userFound = null;
+          if (selectedPortal === 'AIRE' && ![UserRole.ADMIN_AIRE, UserRole.PERSONNEL_AIRE].includes(userFound.role)) userFound = null;
         }
       }
 
-      if (user) {
-        setCurrentUser(user as unknown as User);
+      if (userFound) {
+        setCurrentUser(userFound as unknown as User);
         setAppState('authenticated');
         setActiveTab('home');
       } else {
-        setError("Identifiants ou sélection incorrects.");
+        setError("Identifiants incorrects ou portail non autorisé.");
       }
       setIsLoading(false);
     }, 1000);
@@ -86,7 +88,7 @@ const App: React.FC = () => {
 
   if (appState === 'loading') {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-1000">
         <div className="relative mb-10">
            <div className="absolute inset-0 bg-[#7BAE7F]/20 blur-[60px] rounded-full animate-pulse"></div>
            <div className="relative w-32 h-32 bg-[#7BAE7F] rounded-[40px] flex items-center justify-center shadow-2xl animate-bounce">
@@ -100,7 +102,7 @@ const App: React.FC = () => {
         <p className="text-[10px] font-black text-[#7BAE7F] uppercase tracking-[0.4em]">Comfort ASBL • Nord-Kivu</p>
         <div className="mt-12 flex items-center gap-3 text-gray-300">
           <Loader2 className="animate-spin" size={20} />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Initialisation...</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest">Initialisation du système...</span>
         </div>
       </div>
     );
@@ -110,8 +112,8 @@ const App: React.FC = () => {
     const portals = [
       { id: 'DPS' as PortalType, title: 'DPS / COMFORT', sub: 'Supervision Provinciale', icon: Shield, color: 'bg-gray-900' },
       { id: 'ZONE' as PortalType, title: 'Zone de Santé', sub: 'Gestion Territoriale', icon: Building2, color: 'bg-blue-600' },
-      { id: 'AIRE' as PortalType, title: 'Aire de Santé', icon: Activity, sub: 'Personnel Médical', color: 'bg-[#7BAE7F]' },
-      { id: 'COMMUNITY' as PortalType, title: 'Communauté', icon: Users, sub: 'Femmes Enceintes', color: 'bg-rose-500' },
+      { id: 'AIRE' as PortalType, title: 'Aire de Santé', icon: Activity, sub: 'Personnel Médical Local', color: 'bg-[#7BAE7F]' },
+      { id: 'COMMUNITY' as PortalType, title: 'Communauté', icon: Users, sub: 'Mères & Familles', color: 'bg-rose-500' },
     ];
 
     return (
@@ -122,9 +124,9 @@ const App: React.FC = () => {
                 <div className="w-12 h-12 bg-[#7BAE7F] rounded-2xl flex items-center justify-center text-white shadow-lg">
                    <Baby size={24} />
                 </div>
-                <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Bienvenue</h1>
+                <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Bienvenue sur MaternalCare+</h1>
               </div>
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest leading-relaxed">Choisissez votre portail pour accéder aux services.</p>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest leading-relaxed">Veuillez choisir votre portail d'accès provincial.</p>
            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -154,18 +156,21 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
         <div className="w-full max-w-md">
            <button 
-            onClick={() => { setAppState('portal-selection'); setSelectedZone(''); setSelectedFacility(''); }}
+            onClick={() => { setAppState('portal-selection'); setSelectedZone(''); setSelectedFacility(''); setError(null); }}
             className="flex items-center gap-3 text-gray-400 hover:text-gray-900 transition-colors mb-10 group"
            >
               <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-              <span className="text-xs font-black uppercase tracking-widest">Retour au menu</span>
+              <span className="text-xs font-black uppercase tracking-widest">Retour au choix du portail</span>
            </button>
 
            <div className="mb-12">
-              <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter leading-none mb-4">Connexion</h2>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                Portail {selectedPortal}
-              </p>
+              <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter leading-none mb-4">Identification</h2>
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${selectedPortal === 'COMMUNITY' ? 'bg-rose-500' : 'bg-[#7BAE7F]'}`}></span>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  Accès Portail {selectedPortal}
+                </p>
+              </div>
            </div>
 
            <form className="space-y-6" onSubmit={handleLogin}>
@@ -176,41 +181,42 @@ const App: React.FC = () => {
                 </div>
               )}
 
-              {/* Sélection Zone pour ZONE ou AIRE */}
+              {/* ÉTAPE 1 : Choix de la Zone de Santé (Pour ZONE et AIRE) */}
               {(selectedPortal === 'ZONE' || selectedPortal === 'AIRE') && (
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase text-gray-400 ml-4 tracking-widest">Zone de Santé</label>
                   <select 
                     required 
-                    className="w-full bg-gray-50 border border-gray-100 p-6 rounded-3xl outline-none focus:border-blue-500 font-bold text-gray-700 appearance-none"
+                    className="w-full bg-gray-50 border border-gray-100 p-6 rounded-3xl outline-none focus:border-blue-500 font-bold text-gray-700 appearance-none shadow-sm cursor-pointer"
                     value={selectedZone}
                     onChange={(e) => { setSelectedZone(e.target.value); setSelectedFacility(''); }}
                   >
-                    <option value="">Choisir la zone...</option>
+                    <option value="">-- Sélectionner la Zone --</option>
                     {ZONES_SANTE.map(z => <option key={z} value={z}>{z}</option>)}
                   </select>
                 </div>
               )}
 
-              {/* Sélection Aire si une zone est choisie et portail AIRE */}
+              {/* ÉTAPE 2 : Choix de l'Aire de Santé (Seulement si portail AIRE et Zone choisie) */}
               {selectedPortal === 'AIRE' && selectedZone && (
                 <div className="space-y-2 animate-in slide-in-from-top duration-300">
                   <label className="text-[10px] font-black uppercase text-gray-400 ml-4 tracking-widest">Aire de Santé</label>
                   <select 
                     required 
-                    className="w-full bg-gray-50 border border-gray-100 p-6 rounded-3xl outline-none focus:border-[#7BAE7F] font-bold text-gray-700 appearance-none"
+                    className="w-full bg-gray-50 border border-gray-100 p-6 rounded-3xl outline-none focus:border-[#7BAE7F] font-bold text-gray-700 appearance-none shadow-sm cursor-pointer"
                     value={selectedFacility}
                     onChange={(e) => setSelectedFacility(e.target.value)}
                   >
-                    <option value="">Choisir l'aire...</option>
+                    <option value="">-- Sélectionner l'Aire --</option>
                     {AIRES_BY_ZONE[selectedZone]?.map(a => <option key={a} value={a}>{a}</option>)}
                   </select>
                 </div>
               )}
 
+              {/* Champs Identifiants (ID Agent ou Téléphone) */}
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-gray-400 ml-4 tracking-widest">
-                  {selectedPortal === 'COMMUNITY' ? 'Numéro de Téléphone' : 'ID Agent'}
+                  {selectedPortal === 'COMMUNITY' ? 'Numéro de Téléphone' : 'ID Agent Provincial'}
                 </label>
                 <input
                   type={selectedPortal === 'COMMUNITY' ? 'tel' : 'text'}
@@ -218,12 +224,12 @@ const App: React.FC = () => {
                   value={loginId}
                   onChange={(e) => setLoginId(e.target.value)}
                   className="w-full bg-gray-50 border border-gray-100 p-6 rounded-3xl outline-none focus:border-gray-900 font-black text-gray-800"
-                  placeholder={selectedPortal === 'COMMUNITY' ? '0991234567' : 'Ex: ID-001'}
+                  placeholder={selectedPortal === 'COMMUNITY' ? '099XXXXXXX' : 'Format ID-XXX'}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-gray-400 ml-4 tracking-widest">Code PIN</label>
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-4 tracking-widest">Code PIN de Sécurité</label>
                 <input
                   type="password"
                   required
@@ -244,7 +250,7 @@ const App: React.FC = () => {
                   selectedPortal === 'ZONE' ? 'bg-blue-600 shadow-blue-200' : 'bg-[#7BAE7F] shadow-green-200'
                 }`}
               >
-                {isLoading ? <Loader2 size={24} className="animate-spin" /> : <span>Accéder au Portail</span>}
+                {isLoading ? <Loader2 size={24} className="animate-spin" /> : <span>Valider et Accéder</span>}
               </button>
            </form>
         </div>
@@ -252,7 +258,7 @@ const App: React.FC = () => {
     );
   }
 
-  // Safety guard for null user after auth
+  // Sécurité de rendu final (après authentification)
   if (!currentUser) return null;
 
   if (isViewingPartogram) {
@@ -274,14 +280,16 @@ const App: React.FC = () => {
 
       <div className="flex-1 flex flex-col lg:ml-[280px] min-h-screen">
         <header className="lg:hidden px-6 py-6 flex justify-between items-center bg-transparent relative z-30">
-          <button onClick={() => setIsDrawerOpen(true)} className="p-3 bg-white rounded-2xl shadow-sm text-gray-400 border border-gray-50">
+          <button onClick={() => setIsDrawerOpen(true)} className="p-3 bg-white rounded-2xl shadow-sm text-gray-400 border border-gray-50 hover:text-[#7BAE7F] transition-all">
             <Shield size={20} />
           </button>
           <div className="flex flex-col items-center">
               <span className="text-[10px] font-black text-[#7BAE7F] uppercase tracking-[0.3em]">Comfort ASBL</span>
-              <span className="text-[8px] text-gray-300 font-bold uppercase leading-none mt-1">{currentUser.facility || currentUser.zone || 'DPS Nord-Kivu'}</span>
+              <span className="text-[8px] text-gray-300 font-bold uppercase leading-none mt-1">
+                {currentUser.facility || currentUser.zone || 'DPS Nord-Kivu'}
+              </span>
           </div>
-          <img src={currentUser.avatar} className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" alt="Profile" />
+          <img src={currentUser.avatar} className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" alt="Profil" />
         </header>
 
         <main className="flex-1 overflow-y-auto page-transition pb-20 lg:pb-10">

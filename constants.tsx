@@ -1,6 +1,6 @@
 
 import { UserRole } from './types';
-import { Home, ClipboardList, MapPinned, MessageSquareQuote, BarChart3, Settings, ShieldCheck, Bell, HelpCircle, Languages, LogOut } from 'lucide-react';
+import { Home, ClipboardList, MapPinned, MessageSquareMore, BarChart3, Settings, ShieldCheck, Bell, HelpCircle, Languages, LogOut } from 'lucide-react';
 
 export const ZONES_SANTE = ['Goma', 'Karisimbi', 'Nyiragongo'];
 
@@ -43,11 +43,11 @@ export const NAV_ITEMS_BY_ROLE: Record<string, any[]> = {
   [UserRole.PERSONNEL_AIRE]: [
     { id: 'home', label: 'Accueil', icon: Home },
     { id: 'monitoring', label: 'CPN', icon: ClipboardList },
-    { id: 'afyabot', label: 'AfyaBot', icon: MessageSquareQuote },
+    { id: 'afyabot', label: 'AfyaBot', icon: MessageSquareMore },
   ],
   [UserRole.FEMME_ENCEINTE]: [
     { id: 'home', label: 'Ma Grossesse', icon: Home },
-    { id: 'afyabot', label: 'AfyaBot', icon: MessageSquareQuote },
+    { id: 'afyabot', label: 'AfyaBot', icon: MessageSquareMore },
     { id: 'monitoring', label: 'Mon Suivi', icon: ClipboardList },
   ]
 };
