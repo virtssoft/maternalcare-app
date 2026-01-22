@@ -8,8 +8,14 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>
-    // Polyfill pour éviter l'erreur "process is not defined" qui cause l'écran blanc
-    window.process = { env: { API_KEY: "" } };
+    // Polyfill robuste pour éviter "process is not defined" qui bloque le rendu sur Vercel
+    if (typeof window !== 'undefined') {
+      window.process = { 
+        env: { 
+          API_KEY: "" 
+        } 
+      };
+    }
   </script>
   <style>
     :root {
