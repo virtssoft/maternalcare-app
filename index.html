@@ -7,6 +7,10 @@
   <title>MaternalCare+</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    // Polyfill pour éviter l'erreur "process is not defined" qui cause l'écran blanc
+    window.process = { env: { API_KEY: "" } };
+  </script>
   <style>
     :root {
       --primary: #7BAE7F;
@@ -28,12 +32,6 @@
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @media (min-width: 1024px) {
-      .main-content {
-        margin-left: 280px;
-      }
     }
   </style>
 <script type="importmap">
